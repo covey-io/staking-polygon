@@ -189,4 +189,8 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
     function revokeDispenser(address _addr) external onlyOwner {
         revokeRole(DISPENSER, _addr);
     }
+
+    function getPendingUnstakers() public view returns(address[] memory _pendingUnstakers) {
+        return pendingUnstakers;
+    }
 }
