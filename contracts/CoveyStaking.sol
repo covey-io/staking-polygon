@@ -135,7 +135,7 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
         address bankruptciesReceiver,
         address[] calldata bankruptAddresses,
         uint256[] calldata indices
-    ) external onlyOwner {
+    ) external onlyOwnerOrDispenser {
         uint256 bankruptAddressesLength = bankruptAddresses.length;
         require(bankruptAddressesLength == indices.length, "length mismatch");
         address bankruptAddress;
