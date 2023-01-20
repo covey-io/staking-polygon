@@ -193,4 +193,8 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
     function getPendingUnstakers() public view returns(address[] memory _pendingUnstakers) {
         return pendingUnstakers;
     }
+
+    function getStakers() public view returns(address[] memory  _stakers) {
+        return stakers.values();
+    }
 }
