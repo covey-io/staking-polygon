@@ -82,20 +82,6 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
         emit Unstaked(msg.sender, amount, totalUnstakedAmount);
     }
 
-    /// @dev iterates through pendingUnstakers, might run out of gas
-    function cancelUnstake() external {
-        require(unstakedAmounts[msg.sender] > 0, "0 unstake");
-        delete unstakedAmounts[msg.sender];
-        uint256 numUnstakers = pendingUnstakers.length;
-        for (uint i; i < numUnstakers; ++i) {
-            if (pendingUnstakers[i] == msg.sender) {
-                pendingUnstakers[i] = pendingUnstakers[numUnstakers - 1];
-                pendingUnstakers.pop();
-                break;
-            }
-        }
-        emit CancelledUnstake(msg.sender);
-    }
 
     /// @dev more gas efficient by taking in the index to avoid iterating through pendingUnstakers
     function cancelUnstake(uint256 index) external {
