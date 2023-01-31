@@ -184,25 +184,5 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
         return stakers.values();
     }
 
-    /// @dev break glass in case of emergency function to give back stakes to users for any reason
-    function emergencyDispense() external onlyOwnerOrDispenser {
-        uint256 numStakers = stakers.length();
-
-        for(uint256 i = 0; i < numStakers; ++i) {
-            address staker = stakers.at(i);
-            uint256 fullStakedAmount = stakedAmounts[staker];
-            stakingToken.transfer(staker, fullStakedAmount);
-            stakers.remove(staker);
-            delete stakedAmounts[staker];
-            
-            if (unstakedAmounts[staker] > 0) {
-                delete unstakedAmounts[staker];
-            }
-
-            emit StakeDispensed(staker, fullStakedAmount);
-        }
-
-        delete pendingUnstakers;
-        
-    }
+    
 }
