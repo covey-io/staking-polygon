@@ -93,12 +93,18 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
         emit CancelledUnstake(msg.sender);
     }
 
-    function dispenseStakes() external onlyOwnerOrDispenser {
-        // iterate through pendingUnstakers list
-        uint256 numUnstakers = pendingUnstakers.length;
+    function dispenseStakes(uint256 iterations) external onlyOwnerOrDispenser {
+        // iterating min(numUnstakers, iterations) starting from the end of list
+        // subtracted 1 for the last index
+        // it's assumed that there is at least 1 pending unstaker so that sub underflow won't occur
+        uint256 lastIndex = (pendingUnstakers.length > iterations ? 
+            iterations :
+            pendingUnstakers.length)
+            - 1;
+        
         address unstaker;
         uint256 unstakeAmount;
-        for(uint256 i; i < numUnstakers; ++i) {
+        for(uint256 i = lastIndex;; --i) {
             unstaker = pendingUnstakers[i];
             unstakeAmount = unstakedAmounts[unstaker];
             stakedAmounts[unstaker] = stakedAmounts[unstaker] - unstakeAmount;
@@ -109,9 +115,13 @@ contract CoveyStaking is Initializable, AccessControlUpgradeable {
 
             stakingToken.transfer(unstaker, unstakeAmount);
             emit StakeDispensed(unstaker, unstakeAmount);
+            
+            // remove entry from array
+            pendingUnstakers.pop();
+            
+            // finally, exit loop if last iteration
+            if (i == 0) break;
         }
-        // finally, reset pendingUnstakers list
-        delete pendingUnstakers;
     }
 
     /// @param indices array of indices of bankruptAddresses in the pendingUnstaker array
